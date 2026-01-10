@@ -27,10 +27,10 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'buy_price' => 'decimal:2',
-        'sell_price' => 'decimal:2',
-        'is_active' => 'boolean',
-        'expired_date' => 'date',
+        'buy_price'     => 'decimal:2',
+        'sell_price'    => 'decimal:2',
+        'is_active'     => 'boolean',
+        'expired_date'  => 'date',
     ];
 
     /**
@@ -106,7 +106,14 @@ class Product extends Model
      */
     public function scopeLowStock($query)
     {
-        return $query->whereColumn('stock', '<=', 'min_stock');
+        return $query
+            ->whereColumn('stock', '<=', 'min_stock')
+            ->where('stock', '>', 0);
+    }
+
+    public function scopeOutOfStock($query)
+    {
+        return $query->where('stock', '<=', 0);
     }
 
     /**

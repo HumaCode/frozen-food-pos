@@ -13,13 +13,13 @@ class CreateCategory extends CreateRecord
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
-    } 
+    }
 
     protected function getCreatedNotification(): ?Notification
     {
         return Notification::make()
-                ->title('Kategori berhasil dibuat.')
-                ->body('Anda telah berhasil membuat kategori baru.')
-                ->success();
+            ->title('Kategori berhasil dibuatsss.')
+            ->body('Anda telah berhasil membuat kategori baru.')
+            ->success();
     }
 }

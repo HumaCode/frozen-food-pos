@@ -23,6 +23,10 @@ class ProductResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Master Data';
 
+    protected static ?string $navigationLabel = 'Produk';
+    protected static ?string $modelLabel = 'Produk';
+    protected static ?string $pluralModelLabel = 'Produk';
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
@@ -51,5 +55,16 @@ class ProductResource extends Resource
             'create' => CreateProduct::route('/create'),
             'edit' => EditProduct::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        $lowStock = static::getModel()::whereColumn('stock', '<=', 'min_stock')->count();
+        return $lowStock > 0 ? 'danger' : 'primary';
     }
 }

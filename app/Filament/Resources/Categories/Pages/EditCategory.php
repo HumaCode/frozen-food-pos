@@ -26,8 +26,8 @@ class EditCategory extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         return Notification::make()
-                ->title('Kategori berhasil diubah.')
-                ->body('Anda telah berhasil mengubah kategori.')
-                ->success();
+            ->title('Kategori berhasil diubah.')
+            ->body('Anda telah berhasil mengubah kategori.')
+            ->success();
     }
 }
