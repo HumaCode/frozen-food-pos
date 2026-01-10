@@ -167,7 +167,7 @@ class WholesalePriceForm
                             ->default(true)
                             ->inline(false),
                     ])
-                    ->columns(1),
-            ]);
+                    ,
+            ])->columns(1);
     }
 }

@@ -167,7 +167,7 @@ class DiscountsTable
                     )
                     ->toggle(),
             ])
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     EditAction::make()
                         ->icon(Heroicon::OutlinedPencilSquare),
