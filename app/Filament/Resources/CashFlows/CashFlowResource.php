@@ -25,6 +25,12 @@ class CashFlowResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Transaksi';
 
+    protected static ?string $navigationLabel = 'Kas Masuk/Keluar';
+
+    protected static ?string $modelLabel = 'Kas';
+    
+    protected static ?string $pluralModelLabel = 'Kas Masuk/Keluar';
+
     protected static ?int $navigationSort = 6;
 
     protected static ?string $recordTitleAttribute = 'description';
@@ -59,5 +65,16 @@ class CashFlowResource extends Resource
             'view' => ViewCashFlow::route('/{record}'),
             'edit' => EditCashFlow::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::whereDate('created_at', today())->count();
+        return $count > 0 ? $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
     }
 }
