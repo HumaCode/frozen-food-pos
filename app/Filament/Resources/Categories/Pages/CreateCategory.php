@@ -18,7 +18,7 @@ class CreateCategory extends CreateRecord
     protected function getCreatedNotification(): ?Notification
     {
         return Notification::make()
-            ->title('Kategori berhasil dibuatsss.')
+            ->title('Kategori berhasil dibuat.')
             ->body('Anda telah berhasil membuat kategori baru.')
             ->success();
     }

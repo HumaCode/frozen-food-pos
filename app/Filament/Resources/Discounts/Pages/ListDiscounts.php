@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Discounts\Pages;
 use App\Filament\Resources\Discounts\DiscountResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Icons\Heroicon;
 
 class ListDiscounts extends ListRecords
 {
@@ -13,7 +14,9 @@ class ListDiscounts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Tambah Diskon')
+                ->icon(Heroicon::OutlinedPlus),
         ];
     }
 }
