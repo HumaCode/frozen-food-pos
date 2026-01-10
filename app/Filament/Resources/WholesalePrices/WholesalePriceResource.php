@@ -23,6 +23,12 @@ class WholesalePriceResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Promosi';
 
+    protected static ?string $navigationLabel = 'Harga Grosir';
+
+    protected static ?string $modelLabel = 'Harga Grosir';
+    
+    protected static ?string $pluralModelLabel = 'Harga Grosir';
+
     protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema

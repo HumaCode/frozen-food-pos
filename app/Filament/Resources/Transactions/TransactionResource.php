@@ -25,6 +25,12 @@ class TransactionResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Transaksi';
 
+    protected static ?string $navigationLabel = 'Transaksi';
+
+    protected static ?string $modelLabel = 'Transaksi';
+    
+    protected static ?string $pluralModelLabel = 'Transaksi';
+
     protected static ?int $navigationSort = 5;
 
     protected static ?string $recordTitleAttribute = 'invoice_number';

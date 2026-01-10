@@ -23,6 +23,12 @@ class DiscountResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Promosi';
 
+    protected static ?string $navigationLabel = 'Diskon';
+
+    protected static ?string $modelLabel = 'Diskon';
+    
+    protected static ?string $pluralModelLabel = 'Diskon';
+
     protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'name';
