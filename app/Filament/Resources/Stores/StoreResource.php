@@ -23,6 +23,12 @@ class StoreResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Pengaturan';
 
+    protected static ?string $navigationLabel = 'Toko';
+    
+    protected static ?string $modelLabel = 'Toko';
+    
+    protected static ?string $pluralModelLabel = 'Toko';
+
     protected static ?int $navigationSort = 7;
 
     protected static ?string $recordTitleAttribute = 'name';
@@ -51,5 +57,11 @@ class StoreResource extends Resource
             'create' => CreateStore::route('/create'),
             'edit' => EditStore::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        // Hanya boleh ada 1 toko (singleton)
+        return Store::count() === 0;
     }
 }
