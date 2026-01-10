@@ -50,4 +50,15 @@ class WholesalePriceResource extends Resource
             'edit' => EditWholesalePrice::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $active = static::getModel()::where('is_active', true)->count();
+        return $active > 0 ? $active : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
+    }
 }

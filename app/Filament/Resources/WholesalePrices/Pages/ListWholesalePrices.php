@@ -5,6 +5,7 @@ namespace App\Filament\Resources\WholesalePrices\Pages;
 use App\Filament\Resources\WholesalePrices\WholesalePriceResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Icons\Heroicon;
 
 class ListWholesalePrices extends ListRecords
 {
@@ -13,7 +14,9 @@ class ListWholesalePrices extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Tambah Harga Grosir')
+                ->icon(Heroicon::OutlinedPlus),
         ];
     }
 }
