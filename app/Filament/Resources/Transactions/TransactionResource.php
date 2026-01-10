@@ -55,9 +55,24 @@ class TransactionResource extends Resource
     {
         return [
             'index' => ListTransactions::route('/'),
-            'create' => CreateTransaction::route('/create'),
+            // 'create' => CreateTransaction::route('/create'),
             'view' => ViewTransaction::route('/{record}'),
-            'edit' => EditTransaction::route('/{record}/edit'),
+            // 'edit' => EditTransaction::route('/{record}/edit'),
         ];
+    }
+
+     public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::whereDate('created_at', today())->count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'success';
     }
 }
