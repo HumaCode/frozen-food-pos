@@ -11,6 +11,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -29,9 +30,9 @@ class WholesalePricesTable
         return $table
             ->columns([
                 ImageColumn::make('product.image')
-                    ->label('')
-                    ->circular()
-                    ->size(45)
+                    ->label('Gambar')
+                    ->alignCenter()
+                    ->disk('public')
                     ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->product?->name ?? 'P') . '&background=6366f1&color=fff'),
 
                 TextColumn::make('product.name')
@@ -39,13 +40,14 @@ class WholesalePricesTable
                     ->searchable()
                     ->sortable()
                     ->weight('semibold')
-                    ->description(fn (WholesalePrice $record) => $record->product?->category?->name),
+                    ->formatStateUsing(fn(string $state) => ucwords(strtolower($state)))
+                    ->description(fn(WholesalePrice $record) => ucwords(strtolower($record->product?->category?->name ?? ''))),
 
                 TextColumn::make('product.sell_price')
                     ->label('Harga Normal')
-                    ->money('IDR')
                     ->sortable()
-                    ->color('gray'),
+                    ->color('gray')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('min_qty')
                     ->label('Min. Qty')
@@ -57,10 +59,10 @@ class WholesalePricesTable
 
                 TextColumn::make('price')
                     ->label('Harga Grosir')
-                    ->money('IDR')
                     ->sortable()
                     ->color('success')
-                    ->weight('semibold'),
+                    ->weight('semibold')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('savings')
                     ->label('Hemat')
@@ -86,7 +88,15 @@ class WholesalePricesTable
 
                 ToggleColumn::make('is_active')
                     ->label('Aktif')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->afterStateUpdated(function (WholesalePrice $record, bool $state) {
+                        $status = $state ? 'aktifkan' : 'nonaktifkan';
+                        Notification::make()
+                            ->title('Harga grosir "' . $record->name . '" berhasil ' . $status)
+                            ->body('Perubahan telah disimpan.')
+                            ->success()
+                            ->send();
+                    }),
 
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
@@ -111,7 +121,8 @@ class WholesalePricesTable
                     ->label('Status')
                     ->trueLabel('Aktif')
                     ->falseLabel('Nonaktif')
-                    ->placeholder('Semua'),
+                    ->placeholder('Semua')
+                    ->searchable(),
 
                 Filter::make('high_discount')
                     ->label('Diskon Besar (≥20%)')
