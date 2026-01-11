@@ -24,6 +24,7 @@ class CategoryForm
                             ->directory('categories')
                             ->imageEditor()
                             ->maxSize(2048)
+                            ->hint('Maksimal ukuran file 2MB')
                             ->acceptedFileTypes([
                                 'image/jpeg',
                                 'image/png',

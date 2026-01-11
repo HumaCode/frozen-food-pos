@@ -4,8 +4,10 @@ namespace App\Filament\Resources\Products\Tables;
 
 use App\Models\Product;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -14,6 +16,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Picqer\Barcode\BarcodeGeneratorHTML;
 
 class ProductsTable
 {
@@ -30,40 +33,51 @@ class ProductsTable
                     ->sortable()
                     ->weight('semibold')
                     ->wrap()
-                    ->description(fn(Product $record) => $record->category?->name),
+                    ->formatStateUsing(fn(string $state) => ucwords(strtolower($state)))
+                    ->description(fn(Product $record) => ucwords(strtolower($record->category?->name ?? ''))),
 
                 ImageColumn::make('image')
                     ->label('Gambar')
-                    ->circular()
-                    ->size(48)
-                    ->defaultImageUrl(asset('images/no-image.png')),
+                    ->disk('public')
+                    ->alignCenter()
+                    ->defaultImageUrl(asset('images/noimage.png')),
 
                 TextColumn::make('barcode')
                     ->label('Barcode / SKU')
-                    ->searchable()
+                    ->html()
+                    ->formatStateUsing(function ($state) {
+                        if (! $state) return '-';
+
+                        $generator = new BarcodeGeneratorHTML();
+
+                        return '
+                            <div class="flex flex-col items-center gap-1">
+                                ' . $generator->getBarcode($state, $generator::TYPE_CODE_128, 1.4, 35) . '
+                                <span class="text-xs font-mono text-gray-500">' . $state . '</span>
+                            </div>
+                        ';
+                    })
                     ->copyable()
-                    ->copyMessage('Barcode disalin')
-                    ->fontFamily('mono')
-                    ->color('gray')
-                    ->placeholder('-')
-                    ->toggleable(),
+                    ->copyMessage('Barcode disalin'),
+
 
                 // ===============================
                 // HARGA
                 // ===============================
                 TextColumn::make('buy_price')
                     ->label('Harga Beli')
-                    ->money('IDR')
                     ->sortable()
                     ->color('gray')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('sell_price')
                     ->label('Harga Jual')
-                    ->money('IDR')
-                    ->sortable()
+                    ->weight('semibold')
                     ->color('success')
-                    ->weight('semibold'),
+                    ->sortable()
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format((int) $state, 0, ',', '.')),
+
 
                 // ===============================
                 // STOK
@@ -150,6 +164,7 @@ class ProductsTable
                 TernaryFilter::make('is_active')
                     ->label('Status')
                     ->trueLabel('Aktif')
+                    ->searchable()
                     ->falseLabel('Nonaktif')
                     ->placeholder('Semua'),
 
@@ -179,7 +194,23 @@ class ProductsTable
             // ACTIONS
             // ===============================
             ->recordActions([
-                EditAction::make(),
+                ViewAction::make()
+                    ->icon('heroicon-o-eye')
+                    ->label('')
+                    ->tooltip('Lihat')
+                    ->iconButton(),
+
+                EditAction::make()
+                    ->icon('heroicon-o-pencil-square')
+                    ->label('')
+                    ->tooltip('Edit')
+                    ->iconButton(),
+
+                DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->label('')
+                    ->tooltip('Hapus')
+                    ->iconButton(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

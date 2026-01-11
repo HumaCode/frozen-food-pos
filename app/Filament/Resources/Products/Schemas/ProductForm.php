@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Support\HtmlString;
 
 class ProductForm
 {
@@ -48,18 +49,21 @@ class ProductForm
                                     ->preload()
                                     ->native(false)
                                     ->placeholder('Pilih kategori'),
+
                                 TextInput::make('name')
                                     ->label('Nama Produk')
                                     ->required()
                                     ->maxLength(255)
                                     ->placeholder('Masukkan nama produk')
                                     ->autocomplete(false),
+
                                 TextInput::make('barcode')
                                     ->label('Barcode / SKU')
                                     ->maxLength(100)
                                     ->unique(ignoreRecord: true)
                                     ->placeholder('Scan atau input manual')
                                     ->prefixIcon('heroicon-o-qr-code'),
+
                             ])->columns(1),
 
                         Section::make('Harga')
@@ -92,15 +96,21 @@ class ProductForm
                                 Placeholder::make('profit_display')
                                     ->label('Keuntungan')
                                     ->content(function (Get $get) {
-                                        $buy = (float) $get('buy_price') ?: 0;
-                                        $sell = (float) $get('sell_price') ?: 0;
+                                        $buy = (float) $get('buy_price');
+                                        $sell = (float) $get('sell_price');
+
                                         $profit = $sell - $buy;
                                         $percentage = $buy > 0 ? round(($profit / $buy) * 100, 1) : 0;
 
-                                        $color = $profit > 0 ? 'text-green-600' : ($profit < 0 ? 'text-red-600' : 'text-gray-500');
-
-                                        return new \Illuminate\Support\HtmlString(
-                                            "<span class='{$color} font-semibold'>Rp " . number_format($profit, 0, ',', '.') . " ({$percentage}%)</span>"
+                                        $color = match (true) {
+                                            $profit > 0 => 'text-green-600',
+                                            $profit < 0 => 'text-red-600',
+                                            default => 'text-yellow-500',
+                                        };
+                                        return new HtmlString(
+                                            "<span class='{$color} font-semibold'>
+                                                Rp " . number_format($profit, 0, ',', '.') . " ({$percentage}%)
+                                            </span>"
                                         );
                                     }),
                             ])->columns(2),
@@ -115,9 +125,15 @@ class ProductForm
                                     ->image()
                                     ->imageEditor()
                                     ->directory('products')
-                                    ->imageCropAspectRatio('1:1')
-                                    ->imageResizeTargetWidth('400')
-                                    ->imageResizeTargetHeight('400')
+                                    ->disk('public')
+                                    ->maxSize(2048)
+                                    ->preserveFilenames()
+                                    ->hint('Maksimal ukuran file 2MB')
+                                    ->acceptedFileTypes([
+                                        'image/jpeg',
+                                        'image/png',
+                                        'image/webp'
+                                    ])
                                     ->columnSpanFull(),
                             ]),
 
