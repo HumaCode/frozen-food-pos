@@ -11,6 +11,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -31,7 +32,8 @@ class ShiftsTable
                     ->sortable()
                     ->weight('semibold')
                     ->icon('heroicon-o-clock')
-                    ->iconColor('primary'),
+                    ->iconColor('primary')
+                    ->formatStateUsing(fn(string $state) => ucwords(strtolower($state))),
 
                 TextColumn::make('start_time')
                     ->label('Mulai')
@@ -39,6 +41,7 @@ class ShiftsTable
                     ->sortable()
                     ->badge()
                     ->color('success')
+                    ->alignCenter()
                     ->icon('heroicon-o-play'),
 
                 TextColumn::make('end_time')
@@ -46,6 +49,7 @@ class ShiftsTable
                     ->time('H:i')
                     ->sortable()
                     ->badge()
+                    ->alignCenter()
                     ->color('danger')
                     ->icon('heroicon-o-stop'),
 
@@ -64,7 +68,7 @@ class ShiftsTable
                             $hours = $start->diffInHours($end);
                             $minutes = $start->diffInMinutes($end) % 60;
 
-                            $text = $hours . 'j';
+                            $text = $hours . ' jam';
                             if ($minutes > 0) {
                                 $text .= ' ' . $minutes . 'm';
                             }
@@ -74,6 +78,7 @@ class ShiftsTable
                             return '-';
                         }
                     })
+                    ->alignCenter()
                     ->badge()
                     ->color('gray'),
 
@@ -90,6 +95,7 @@ class ShiftsTable
                         }
                     })
                     ->badge()
+                    ->alignCenter()
                     ->color(fn(string $state) => $state === 'Malam' ? 'warning' : 'info')
                     ->icon(fn(string $state) => $state === 'Malam' ? 'heroicon-o-moon' : 'heroicon-o-sun'),
 
@@ -97,12 +103,21 @@ class ShiftsTable
                     ->label('Transaksi')
                     ->counts('transactions')
                     ->badge()
+                    ->alignCenter()
                     ->color('success')
                     ->sortable(),
 
                 ToggleColumn::make('is_active')
                     ->label('Aktif')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->afterStateUpdated(function (Shift $record, bool $state) {
+                        $status = $state ? 'aktifkan' : 'nonaktifkan';
+                        Notification::make()
+                            ->title('Data "' . $record->name . '" berhasil ' . $status)
+                            ->body('Perubahan telah disimpan.')
+                            ->success()
+                            ->send();
+                    }),
 
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
@@ -116,7 +131,8 @@ class ShiftsTable
                     ->label('Status')
                     ->trueLabel('Aktif')
                     ->falseLabel('Nonaktif')
-                    ->placeholder('Semua'),
+                    ->placeholder('Semua')
+                    ->searchable(),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -127,7 +143,10 @@ class ShiftsTable
                         ->icon(Heroicon::OutlinedDocumentDuplicate)
                         ->color('info')
                         ->action(function (Shift $record) {
-                            $newShift = $record->replicate();
+                            $newShift = $record->replicate([
+                                'transactions_count',
+                            ]);
+
                             $newShift->name = $record->name . ' (Copy)';
                             $newShift->is_active = false;
                             $newShift->save();
