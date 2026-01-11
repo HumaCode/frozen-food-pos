@@ -34,6 +34,7 @@ class UsersTable
                     ->searchable()
                     ->sortable()
                     ->weight('semibold')
+                    ->formatStateUsing(fn(string $state) => ucwords(strtolower($state)))
                     ->description(fn(User $record) => $record->email),
 
                 TextColumn::make('phone')
@@ -41,6 +42,7 @@ class UsersTable
                     ->icon('heroicon-o-phone')
                     ->iconColor('gray')
                     ->placeholder('-')
+                    ->alignCenter()
                     ->copyable()
                     ->copyMessage('Nomor disalin!'),
 
@@ -48,19 +50,28 @@ class UsersTable
                     ->label('Transaksi')
                     ->counts('transactions')
                     ->badge()
+                    ->alignCenter()
                     ->color('success')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 ToggleColumn::make('is_active')
                     ->label('Aktif')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->afterStateUpdated(function (User $record, bool $state) {
+                        $status = $state ? 'aktifkan' : 'nonaktifkan';
+                        Notification::make()
+                            ->title('User dengan nama "' . $record->name . '" berhasil ' . $status)
+                            ->body('Perubahan telah disimpan.')
+                            ->success()
+                            ->send();
+                    }),
 
                 TextColumn::make('last_login_at')
                     ->label('Login Terakhir')
                     ->since()
-                    ->placeholder('Belum pernah')
                     ->sortable()
+                    ->placeholder('Belum pernah')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
@@ -75,6 +86,7 @@ class UsersTable
                     ->label('Status')
                     ->trueLabel('Aktif')
                     ->falseLabel('Nonaktif')
+                    ->searchable()
                     ->placeholder('Semua'),
 
             ])
