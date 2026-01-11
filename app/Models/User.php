@@ -5,8 +5,10 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -21,7 +23,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        // 'username',
+        'username',
+        'avatar',
         'email',
         'password',
         'is_active',
@@ -37,6 +40,36 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    protected static function booted(): void
+    {
+        static::updating(function ($model) {
+            if ($model->isDirty('avatar')) {
+                $oldImage = $model->getOriginal('avatar');
+
+                if ($oldImage) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+            }
+        });
+
+        static::deleting(function ($model) {
+            // Model pakai SoftDeletes
+            if (in_array(SoftDeletes::class, class_uses_recursive($model))) {
+                if ($model->isForceDeleting()) {
+                    if ($model->avatar) {
+                        Storage::disk('public')->delete($model->avatar);
+                    }
+                }
+            }
+            // Model TIDAK pakai SoftDeletes
+            else {
+                if ($model->avatar) {
+                    Storage::disk('public')->delete($model->avatar);
+                }
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -28,6 +29,12 @@ class UserForm
                                     ->required()
                                     ->maxLength(255)
                                     ->placeholder('Masukkan nama lengkap')
+                                    ->prefixIcon('heroicon-o-user'),
+                                
+                                TextInput::make('username')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true)
                                     ->prefixIcon('heroicon-o-user'),
 
                                 TextInput::make('email')
@@ -72,6 +79,26 @@ class UserForm
                                     ->placeholder('Ulangi password')
                                     ->prefixIcon('heroicon-o-key')
                                     ->dehydrated(false),
+                            ]),
+                        
+                        Section::make('Avatar')
+                            ->icon('heroicon-o-user')
+                            ->description('Upload avatar (optional)')
+                            ->components([
+                                 FileUpload::make('avatar')
+                                    ->label('Avatar')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->directory('users')
+                                    ->disk('public')
+                                    ->maxSize(2048)
+                                    ->hint('Maksimal ukuran file 2MB')
+                                    ->acceptedFileTypes([
+                                        'image/jpeg',
+                                        'image/png',
+                                        'image/webp'
+                                    ])
+                                    ->columnSpanFull(),
                             ]),
                     ])
                     ->columnSpan(['lg' => 2]),

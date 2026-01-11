@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -28,6 +29,14 @@ class UsersTable
     {
         return $table
             ->columns([
+                ImageColumn::make('avatar')
+                    ->label('Avatar')
+                    ->circular()
+                    ->alignCenter()
+                    ->disk('public')
+                    ->imageSize(50)
+                    ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name ?? 'Store') . '&background=6366f1&color=fff&size=60'),
+
 
                 TextColumn::make('name')
                     ->label('Nama')
@@ -36,6 +45,11 @@ class UsersTable
                     ->weight('semibold')
                     ->formatStateUsing(fn(string $state) => ucwords(strtolower($state)))
                     ->description(fn(User $record) => $record->email),
+                
+                TextColumn::make('username')
+                    ->label('Username')
+                    ->searchable()
+                    ->weight('semibold'),
 
                 TextColumn::make('phone')
                     ->label('Telepon')
