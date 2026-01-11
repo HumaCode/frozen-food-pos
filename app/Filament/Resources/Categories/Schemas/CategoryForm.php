@@ -16,34 +16,31 @@ class CategoryForm
             ->components([
                 Section::make('Informasi Kategori')
                     ->schema([
+                        FileUpload::make('image')
+                            ->label('Gambar')
+                            ->image()
+                            ->disk('public')
+                            ->imageEditor()
+                            ->directory('categories')
+                            ->columnSpanFull(),
+
                         TextInput::make('name')
                             ->label('Nama Kategori')
                             ->required()
                             ->maxLength(255)
-                            ->columnSpanFull()
-                            ->placeholder('Masukkan nama kategori')
-                            ->required(),
-                        FileUpload::make('image')
-                            ->label('Gambar')
-                            ->imageEditor()
-                            ->directory('categories')
-                            ->columnSpanFull()
-                            ->image()
-                            ->disk('public')
-                            ->preserveFilenames()
-                            ->downloadable()
-                            ->openable(),
-                        Toggle::make('is_active')
-                            ->label('Aktif')
-                            ->default(true)
-                            ->inline(false)
-                            ->required(),
+                            ->placeholder('Masukkan nama kategori'),
+
                         TextInput::make('sort_order')
                             ->label('Urutan')
                             ->numeric()
                             ->default(0)
                             ->minValue(0)
                             ->helperText('Semakin kecil, semakin atas'),
+
+                        Toggle::make('is_active')
+                            ->label('Aktif')
+                            ->default(true)
+                            ->inline(false),
                     ])->columns(2)
             ])->columns(1);
     }

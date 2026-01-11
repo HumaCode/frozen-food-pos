@@ -26,7 +26,7 @@ class CategoryResource extends Resource
     protected static ?string $navigationLabel = 'Kategori';
 
     protected static ?string $modelLabel = 'Kategori';
-    
+
     protected static ?string $pluralModelLabel = 'Kategori';
 
     protected static ?int $navigationSort = 1;
@@ -55,5 +55,15 @@ class CategoryResource extends Resource
         return [
             'index' => ListCategories::route('/'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
     }
 }
