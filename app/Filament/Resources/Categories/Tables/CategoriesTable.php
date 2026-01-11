@@ -27,10 +27,10 @@ class CategoriesTable
         return $table
             ->columns([
                 ImageColumn::make('image')
-                    ->label('')
-                    ->circular()
+                    ->label('Gambar')
                     ->disk('public')
-                    ->size(45)
+                    ->width(45)
+                    ->alignCenter()
                     ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&background=6366f1&color=fff'),
 
                 TextColumn::make('name')
@@ -56,7 +56,15 @@ class CategoriesTable
 
                 ToggleColumn::make('is_active')
                     ->label('Aktif')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->afterStateUpdated(function (Category $record, bool $state) {
+                        $status = $state ? 'aktifkan' : 'nonaktifkan';
+                        Notification::make()
+                            ->title('Kategori "' . $record->name . '" berhasil ' . $status)
+                            ->body('Perubahan telah disimpan.')
+                            ->success()
+                            ->send();
+                    }),
 
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
@@ -104,7 +112,15 @@ class CategoriesTable
                     DeleteAction::make()
                         ->icon(Heroicon::OutlinedTrash)
                         ->modalHeading('Hapus Kategori')
-                        ->modalDescription(fn(Category $record) => 'Apakah Anda yakin ingin menghapus kategori "' . $record->name . '"?'),
+                        ->modalDescription(fn(Category $record) => 'Apakah Anda yakin ingin menghapus kategori "' . $record->name . '"?')
+                        ->successNotification(null)
+                        ->after(function (Category $record) {
+                            Notification::make()
+                                ->title('Kategori "' . $record->name . '" berhasil dihapus')
+                                ->body('Perubahan telah disimpan.')
+                                ->success()
+                                ->send();
+                        }),
                 ])
                     ->icon(Heroicon::OutlinedEllipsisVertical)
                     ->tooltip('Aksi'),
@@ -117,15 +133,33 @@ class CategoriesTable
                         ->color('success')
                         ->action(fn($records) => $records->each->update(['is_active' => true]))
                         ->deselectRecordsAfterCompletion()
-                        ->requiresConfirmation(),
+                        ->requiresConfirmation()
+                        ->successNotification(
+                            Notification::make()
+                                ->title('Kategori berhasil aktifkan')
+                                ->body('Perubahan telah disimpan.')
+                                ->success()
+                        ),
                     BulkAction::make('deactivate')
                         ->label('Nonaktifkan')
                         ->icon(Heroicon::OutlinedXCircle)
                         ->color('warning')
                         ->action(fn($records) => $records->each->update(['is_active' => false]))
                         ->deselectRecordsAfterCompletion()
-                        ->requiresConfirmation(),
-                    DeleteBulkAction::make(),
+                        ->requiresConfirmation()
+                        ->successNotification(
+                            Notification::make()
+                                ->title('Kategori berhasil nonaktifkan')
+                                ->body('Perubahan telah disimpan.')
+                                ->success()
+                        ),
+                    DeleteBulkAction::make()
+                        ->successNotification(
+                            Notification::make()
+                                ->title('Kategori berhasil dihapus')
+                                ->body('Perubahan telah disimpan.')
+                                ->success()
+                        )
                 ]),
             ])
             ->emptyStateHeading('Belum ada kategori')

@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryForm
 {
@@ -20,8 +21,14 @@ class CategoryForm
                             ->label('Gambar')
                             ->image()
                             ->disk('public')
-                            ->imageEditor()
                             ->directory('categories')
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->acceptedFileTypes([
+                                'image/jpeg',
+                                'image/png',
+                                'image/webp'
+                            ])
                             ->columnSpanFull(),
 
                         TextInput::make('name')
