@@ -19,10 +19,11 @@ class StoresTable
         return $table
             ->columns([
                 ImageColumn::make('logo')
-                
-                    ->label('')
+                    ->label('Gambar')
                     ->circular()
-                    ->size(60)
+                    ->alignCenter()
+                    ->disk('public')
+                    ->imageSize(100)
                     ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name ?? 'Store') . '&background=6366f1&color=fff&size=60'),
 
                 TextColumn::make('name')

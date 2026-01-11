@@ -91,9 +91,14 @@ class StoreForm
                                     ->image()
                                     ->imageEditor()
                                     ->directory('store')
-                                    ->imageCropAspectRatio('1:1')
-                                    ->imageResizeTargetWidth('300')
-                                    ->imageResizeTargetHeight('300')
+                                    ->disk('public')
+                                    ->maxSize(2048)
+                                    ->hint('Maksimal ukuran file 2MB')
+                                    ->acceptedFileTypes([
+                                        'image/jpeg',
+                                        'image/png',
+                                        'image/webp'
+                                    ])
                                     ->helperText('Logo akan ditampilkan di struk (opsional)')
                                     ->columnSpanFull(),
                             ]),
