@@ -64,11 +64,11 @@ class TransactionsTable
                     ->label('Subtotal')
                     ->money('IDR')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('discount_amount')
                     ->label('Diskon')
-                    ->money('IDR')
                     ->sortable()
                     ->color('danger')
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -76,22 +76,22 @@ class TransactionsTable
 
                 TextColumn::make('total')
                     ->label('Total')
-                    ->money('IDR')
                     ->sortable()
                     ->weight('bold')
-                    ->color('success'),
+                    ->color('success')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('paid_amount')
                     ->label('Bayar')
-                    ->money('IDR')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('change_amount')
                     ->label('Kembali')
-                    ->money('IDR')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format((int) $state, 0, ',', '.')),
 
                 TextColumn::make('payment_method')
                     ->label('Pembayaran')
@@ -105,11 +105,11 @@ class TransactionsTable
                         default => $state ?? '-',
                     })
                     ->icon(fn (?string $state) => match($state) {
-                        'cash' => 'heroicon-o-banknotes',
-                        'transfer' => 'heroicon-o-building-library',
-                        'qris' => 'heroicon-o-qr-code',
-                        'debit', 'credit' => 'heroicon-o-credit-card',
-                        default => null,
+                        'cash'              => 'heroicon-o-banknotes',
+                        'transfer'          => 'heroicon-o-building-library',
+                        'qris'              => 'heroicon-o-qr-code',
+                        'debit', 'credit'   => 'heroicon-o-credit-card',
+                        default             => null,
                     })
                     ->color(fn (?string $state) => match($state) {
                         'cash' => 'success',
@@ -146,6 +146,7 @@ class TransactionsTable
                 SelectFilter::make('shift_id')
                     ->label('Shift')
                     ->relationship('shift', 'name')
+                    ->searchable()
                     ->preload(),
 
                 SelectFilter::make('payment_method')
@@ -156,7 +157,8 @@ class TransactionsTable
                         'qris' => 'QRIS',
                         'debit' => 'Debit',
                         'credit' => 'Kredit',
-                    ]),
+                    ])
+                    ->searchable(),
 
                 Filter::make('today')
                     ->label('Hari Ini')
