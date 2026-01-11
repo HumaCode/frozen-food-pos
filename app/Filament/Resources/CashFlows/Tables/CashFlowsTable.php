@@ -92,7 +92,8 @@ class CashFlowsTable
                     ->options([
                         'in' => 'Kas Masuk',
                         'out' => 'Kas Keluar',
-                    ]),
+                    ])
+                    ->searchable(),
 
                 SelectFilter::make('user_id')
                     ->label('User')
@@ -103,7 +104,8 @@ class CashFlowsTable
                 SelectFilter::make('shift_id')
                     ->label('Shift')
                     ->relationship('shift', 'name')
-                    ->preload(),
+                    ->preload()
+                    ->searchable(),
 
                 Filter::make('today')
                     ->label('Hari Ini')
