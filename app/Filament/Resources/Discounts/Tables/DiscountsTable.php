@@ -11,6 +11,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -30,11 +31,11 @@ class DiscountsTable
                 TextColumn::make('name')
                     ->label('Nama Diskon')
                     ->searchable()
-                    ->sortable()
                     ->weight('semibold')
+                    ->formatStateUsing(fn(string $state) => ucwords(strtolower($state)))
                     ->description(
                         fn(Discount $record) => $record->type === 'product'
-                            ? $record->product?->name
+                            ? ucwords(strtolower($record->product?->name ?? ''))
                             : 'Min. belanja Rp ' . number_format($record->min_purchase, 0, ',', '.')
                     ),
 
@@ -115,7 +116,15 @@ class DiscountsTable
 
                 ToggleColumn::make('is_active')
                     ->label('Aktif')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->afterStateUpdated(function (Discount $record, bool $state) {
+                        $status = $state ? 'aktifkan' : 'nonaktifkan';
+                        Notification::make()
+                            ->title('Diskon "' . $record->name . '" berhasil ' . $status)
+                            ->body('Perubahan telah disimpan.')
+                            ->success()
+                            ->send();
+                    }),
 
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
@@ -129,21 +138,24 @@ class DiscountsTable
                     ->label('Jenis')
                     ->options([
                         'product' => 'Per Produk',
-                        'total' => 'Total Belanja',
-                    ]),
+                        'total'   => 'Total Belanja',
+                    ])
+                    ->searchable(),
 
                 SelectFilter::make('discount_type')
                     ->label('Tipe Nilai')
                     ->options([
                         'percentage' => 'Persentase',
                         'nominal' => 'Nominal',
-                    ]),
+                    ])
+                    ->searchable(),
 
                 TernaryFilter::make('is_active')
                     ->label('Status Aktif')
                     ->trueLabel('Aktif')
                     ->falseLabel('Nonaktif')
-                    ->placeholder('Semua'),
+                    ->placeholder('Semua')
+                    ->searchable(),
 
                 Filter::make('currently_valid')
                     ->label('Sedang Berlaku')
