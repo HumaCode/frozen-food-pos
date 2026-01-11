@@ -11,6 +11,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -181,6 +182,8 @@ class DiscountsTable
             ])
             ->recordActions([
                 ActionGroup::make([
+                    // ViewAction::make()
+                    //     ->icon(Heroicon::OutlinedEye),
                     EditAction::make()
                         ->icon(Heroicon::OutlinedPencilSquare),
                     Action::make('duplicate')
