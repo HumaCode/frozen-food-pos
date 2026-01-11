@@ -25,6 +25,12 @@ class UserResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Pengaturan';
 
+    protected static ?string $navigationLabel = 'Pengguna';
+
+    protected static ?string $modelLabel = 'Pengguna';
+
+    protected static ?string $pluralModelLabel = 'Pengguna';
+
     protected static ?int $navigationSort = 9;
 
     protected static ?string $recordTitleAttribute = 'name';
@@ -59,5 +65,15 @@ class UserResource extends Resource
             'view' => ViewUser::route('/{record}'),
             'edit' => EditUser::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'primary';
     }
 }
