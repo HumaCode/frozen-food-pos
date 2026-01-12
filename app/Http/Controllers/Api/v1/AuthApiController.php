@@ -2,17 +2,50 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterApiRequest;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthApiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Register new user
+     *
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index()
+    public function register(RegisterApiRequest $request): JsonResponse
     {
-        //
+        $user = User::create([
+            'name'      => $request->name,
+            'username'  => $request->username,
+            'email'     => $request->email,
+            'phone'     => $request->phone,
+            'password'  => Hash::make($request->password),
+            'is_active' => true,
+        ]);
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return ApiResponse::created([
+            'user' => [
+                'id'         => $user->id,
+                'name'       => $user->name,
+                'username'   => $user->username,
+                'email'      => $user->email,
+                'phone'      => $user->phone,
+                'avatar'     => $user->avatar,
+                'is_active'  => $user->is_active,
+                'created_at' => $user->created_at,
+            ],
+            'token'      => $token,
+            'token_type' => 'Bearer',
+        ], 'Registrasi berhasil');
     }
 
     /**
