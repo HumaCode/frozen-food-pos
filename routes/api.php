@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\V1\ShiftController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\CashFlowController;
 use App\Http\Controllers\Api\v1\CategoryApiController;
+use App\Http\Controllers\Api\v1\DiscountApiController;
+use App\Http\Controllers\Api\v1\ProductApiController;
 use App\Http\Controllers\Api\v1\StoreApiController;
 use App\Http\Controllers\Api\V1\StoreController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -83,26 +85,26 @@ Route::prefix('v1')->middleware(['api.key'])->group(function () {
         | Products
         |------------------------------------------------------------------
         */
-        // Route::prefix('products')->group(function () {
-        //     Route::get('/', [ProductController::class, 'index']);
-        //     Route::get('/search', [ProductController::class, 'search']);
-        //     Route::get('/low-stock', [ProductController::class, 'lowStock']);
-        //     Route::get('/expired', [ProductController::class, 'expired']);
-        //     Route::get('/{product}', [ProductController::class, 'show']);
-        //     Route::post('/barcode', [ProductController::class, 'findByBarcode']);
-        // });
+        Route::prefix('products')->group(function () {
+            Route::get('/', [ProductApiController::class, 'index']);
+            Route::get('/search', [ProductApiController::class, 'search']);
+            Route::get('/low-stock', [ProductApiController::class, 'lowStock']);
+            Route::get('/expired', [ProductApiController::class, 'expired']);
+            Route::get('/{product}', [ProductApiController::class, 'show']);
+            Route::post('/barcode', [ProductApiController::class, 'findByBarcode']);
+        });
 
         /*
         |------------------------------------------------------------------
         | Discounts
         |------------------------------------------------------------------
         */
-        // Route::prefix('discounts')->group(function () {
-        //     Route::get('/', [DiscountController::class, 'index']);
-        //     Route::get('/active', [DiscountController::class, 'active']);
-        //     Route::get('/{discount}', [DiscountController::class, 'show']);
-        //     Route::post('/check', [DiscountController::class, 'check']);
-        // });
+        Route::prefix('discounts')->group(function () {
+            Route::post('/check', [DiscountApiController::class, 'check']);
+            Route::get('/', [DiscountApiController::class, 'index']);
+            Route::get('/active', [DiscountApiController::class, 'active']);
+            Route::get('/{discount}', [DiscountApiController::class, 'show']);
+        });
 
         /*
         |------------------------------------------------------------------
