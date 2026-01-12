@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->login(Login::class)
             ->brandName('Frozen Food')
             ->colors([
@@ -61,5 +62,13 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+            // ->colors([
+            //     'danger'    => Color::Rose,
+            //     'gray'      => Color::Gray,
+            //     'info'      => Color::Blue,
+            //     'primary'   => Color::Gray,
+            //     'success'   => Color::Emerald,
+            //     'warning'   => Color::Orange,
+            // ]);
     }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\WholesalePriceController;
 use App\Http\Controllers\Api\V1\ShiftController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\CashFlowController;
+use App\Http\Controllers\Api\v1\StoreApiController;
 use App\Http\Controllers\Api\V1\StoreController;
 use App\Http\Controllers\Api\V1\UserController;
 
@@ -63,7 +64,7 @@ Route::prefix('v1')->middleware(['api.key'])->group(function () {
         | Store (Toko)
         |------------------------------------------------------------------
         */
-        // Route::get('/store', [StoreController::class, 'index']);
+        Route::get('/store', [StoreApiController::class, 'index']);
 
         /*
         |------------------------------------------------------------------
