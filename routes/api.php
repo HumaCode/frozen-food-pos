@@ -13,9 +13,11 @@ use App\Http\Controllers\Api\V1\CashFlowController;
 use App\Http\Controllers\Api\v1\CategoryApiController;
 use App\Http\Controllers\Api\v1\DiscountApiController;
 use App\Http\Controllers\Api\v1\ProductApiController;
+use App\Http\Controllers\Api\v1\ShiftApiController;
 use App\Http\Controllers\Api\v1\StoreApiController;
 use App\Http\Controllers\Api\V1\StoreController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\v1\WholesaleApiPriceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,22 +113,22 @@ Route::prefix('v1')->middleware(['api.key'])->group(function () {
         | Wholesale Prices (Harga Grosir)
         |------------------------------------------------------------------
         */
-        // Route::prefix('wholesale-prices')->group(function () {
-        //     Route::get('/', [WholesalePriceController::class, 'index']);
-        //     Route::get('/product/{product}', [WholesalePriceController::class, 'byProduct']);
-        //     Route::post('/calculate', [WholesalePriceController::class, 'calculate']);
-        // });
+        Route::prefix('wholesale-prices')->group(function () {
+            Route::get('/', [WholesaleApiPriceController::class, 'index']);
+            Route::get('/product/{product}', [WholesaleApiPriceController::class, 'byProduct']);
+            Route::post('/calculate', [WholesaleApiPriceController::class, 'calculate']);
+        });
 
         /*
         |------------------------------------------------------------------
         | Shifts
         |------------------------------------------------------------------
         */
-        // Route::prefix('shifts')->group(function () {
-        //     Route::get('/', [ShiftController::class, 'index']);
-        //     Route::get('/current', [ShiftController::class, 'current']);
-        //     Route::get('/{shift}', [ShiftController::class, 'show']);
-        // });
+        Route::prefix('shifts')->group(function () {
+            Route::get('/', [ShiftApiController::class, 'index']);
+            Route::get('/current', [ShiftApiController::class, 'current']);
+            Route::get('/{shift}', [ShiftApiController::class, 'show']);
+        });
 
         /*
         |------------------------------------------------------------------
