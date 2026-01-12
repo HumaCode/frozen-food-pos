@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\AuthApiController;
+use App\Http\Controllers\Api\v1\CashflowApiController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\V1\CategoryController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Api\v1\ProductApiController;
 use App\Http\Controllers\Api\v1\ShiftApiController;
 use App\Http\Controllers\Api\v1\StoreApiController;
 use App\Http\Controllers\Api\V1\StoreController;
+use App\Http\Controllers\Api\v1\UserApiController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\v1\WholesaleApiPriceController;
 
@@ -149,25 +151,25 @@ Route::prefix('v1')->middleware(['api.key'])->group(function () {
         | Cash Flow (Kas Masuk/Keluar)
         |------------------------------------------------------------------
         */
-        // Route::prefix('cash-flows')->group(function () {
-        //     Route::get('/', [CashFlowController::class, 'index']);
-        //     Route::post('/', [CashFlowController::class, 'store']);
-        //     Route::get('/today', [CashFlowController::class, 'today']);
-        //     Route::get('/summary', [CashFlowController::class, 'summary']);
-        //     Route::get('/{cashFlow}', [CashFlowController::class, 'show']);
-        //     Route::put('/{cashFlow}', [CashFlowController::class, 'update']);
-        //     Route::delete('/{cashFlow}', [CashFlowController::class, 'destroy']);
-        // });
+        Route::prefix('cash-flows')->group(function () {
+            Route::get('/', [CashflowApiController::class, 'index']);
+            Route::post('/', [CashflowApiController::class, 'store']);
+            Route::get('/today', [CashflowApiController::class, 'today']);
+            Route::get('/summary', [CashflowApiController::class, 'summary']);
+            Route::get('/{cashFlow}', [CashflowApiController::class, 'show']);
+            Route::put('/{cashFlow}', [CashflowApiController::class, 'update']);
+            Route::delete('/{cashFlow}', [CashflowApiController::class, 'destroy']);
+        });
 
         /*
         |------------------------------------------------------------------
         | Users (untuk Owner/Admin)
         |------------------------------------------------------------------
         */
-        // Route::prefix('users')->group(function () {
-        //     Route::get('/', [UserController::class, 'index']);
-        //     Route::get('/{user}', [UserController::class, 'show']);
-        // });
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserApiController::class, 'index']);
+            Route::get('/{user}', [UserApiController::class, 'show']);
+        });
 
     });
 });

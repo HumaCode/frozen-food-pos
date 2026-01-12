@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -43,6 +44,18 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    // Method canAccessPanel sudah di-handle oleh HasPanelShield
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Super admin selalu bisa akses
+        if ($this->hasRole('super_admin')) {
+            return true;
+        }
+
+        // User dengan role apapun bisa akses panel admin
+        return $this->hasAnyRole(['super_admin', 'admin', 'staff', 'kasir']);
+    }
 
     protected static function booted(): void
     {
