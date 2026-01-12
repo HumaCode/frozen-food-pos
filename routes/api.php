@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\DiscountController;
 use App\Http\Controllers\Api\V1\WholesalePriceController;
 use App\Http\Controllers\Api\V1\ShiftController;
-use App\Http\Controllers\Api\V1\TransactionController;
+use App\Http\Controllers\Api\v1\TransactionApiController;
 use App\Http\Controllers\Api\V1\CashFlowController;
 use App\Http\Controllers\Api\v1\CategoryApiController;
 use App\Http\Controllers\Api\v1\DiscountApiController;
@@ -135,14 +135,14 @@ Route::prefix('v1')->middleware(['api.key'])->group(function () {
         | Transactions
         |------------------------------------------------------------------
         */
-        // Route::prefix('transactions')->group(function () {
-        //     Route::get('/', [TransactionController::class, 'index']);
-        //     Route::post('/', [TransactionController::class, 'store']);
-        //     Route::get('/today', [TransactionController::class, 'today']);
-        //     Route::get('/summary', [TransactionController::class, 'summary']);
-        //     Route::post('/sync', [TransactionController::class, 'sync']);
-        //     Route::get('/{transaction}', [TransactionController::class, 'show']);
-        // });
+        Route::prefix('transactions')->group(function () {
+            Route::get('/', [TransactionApiController::class, 'index']);
+            Route::post('/', [TransactionApiController::class, 'store']);
+            Route::get('/today', [TransactionApiController::class, 'today']);
+            Route::get('/summary', [TransactionApiController::class, 'summary']);
+            Route::post('/sync', [TransactionApiController::class, 'sync']);
+            Route::get('/{transaction}', [TransactionApiController::class, 'show']);
+        });
 
         /*
         |------------------------------------------------------------------
@@ -170,5 +170,4 @@ Route::prefix('v1')->middleware(['api.key'])->group(function () {
         // });
 
     });
-
 });
