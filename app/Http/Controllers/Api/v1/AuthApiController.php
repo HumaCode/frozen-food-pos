@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\v1\Profile\ProfileUpdateRequest;
 use App\Http\Requests\LoginApiRequest;
 use App\Http\Requests\RegisterApiRequest;
+use App\Http\Resources\Api\v1\AuthApiResource;
+use App\Http\Resources\Api\v1\LoginResource;
+use App\Http\Resources\Api\v1\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,16 +50,7 @@ class AuthApiController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return ApiResponse::success([
-            'user' => [
-                'id'            => $user->id,
-                'name'          => $user->name,
-                'username'      => $user->username,
-                'email'         => $user->email,
-                'phone'         => $user->phone,
-                'avatar'        => $user->avatar,
-                'is_active'     => $user->is_active,
-                'created_at'    => $user->created_at,
-            ],
+            'user'          => new AuthApiResource($user),
             'token'         => $token,
             'token_type'    => 'Bearer',
         ], 'Login berhasil');
@@ -81,16 +76,7 @@ class AuthApiController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return ApiResponse::created([
-            'user' => [
-                'id'         => $user->id,
-                'name'       => $user->name,
-                'username'   => $user->username,
-                'email'      => $user->email,
-                'phone'      => $user->phone,
-                'avatar'     => $user->avatar,
-                'is_active'  => $user->is_active,
-                'created_at' => $user->created_at,
-            ],
+            'user'       => new AuthApiResource($user),
             'token'      => $token,
             'token_type' => 'Bearer',
         ], 'Registrasi berhasil');
@@ -121,15 +107,7 @@ class AuthApiController extends Controller
         $user = $request->user();
 
         return ApiResponse::success([
-            'id'            => $user->id,
-            'name'          => $user->name,
-            'username'      => $user->username,
-            'email'         => $user->email,
-            'phone'         => $user->phone,
-            'avatar'        => $user->avatar,
-            'is_active'     => $user->is_active,
-            'created_at'    => $user->created_at,
-            'updated_at'    => $user->updated_at,
+            new AuthApiResource($request->user()),
         ], 'Data user berhasil diambil');
     }
 
@@ -139,34 +117,9 @@ class AuthApiController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function updateProfile(Request $request): JsonResponse
+    public function updateProfile(ProfileUpdateRequest $request): JsonResponse
     {
         $user = $request->user();
-
-        // Validasi input
-        $validator = Validator::make($request->all(), [
-            'name'      => 'required|string|max:255',
-            'username'  => 'required|string|max:255|alpha_dash|unique:users,username,' . $user->id,
-            'email'     => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'phone'     => 'nullable|string|max:20',
-            'avatar'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ], [
-            'name.required'         => 'Nama wajib diisi',
-            'name.max'              => 'Nama maksimal 255 karakter',
-            'username.required'     => 'Username wajib diisi',
-            'username.unique'       => 'Username sudah digunakan',
-            'username.alpha_dash'   => 'Username hanya boleh huruf, angka, dash dan underscore',
-            'email.required'        => 'Email wajib diisi',
-            'email.email'           => 'Format email tidak valid',
-            'email.unique'          => 'Email sudah digunakan',
-            'avatar.image'          => 'Avatar harus berupa gambar',
-            'avatar.mimes'          => 'Avatar harus berformat jpg, jpeg, png, atau webp',
-            'avatar.max'            => 'Avatar maksimal 2MB',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::validationError($validator->errors());
-        }
 
         // Handle avatar upload
         $avatarPath = $user->avatar;
@@ -190,18 +143,10 @@ class AuthApiController extends Controller
             'avatar'    => $avatarPath,
         ]);
 
-        return ApiResponse::success([
-            'id'            => $user->id,
-            'name'          => $user->name,
-            'username'      => $user->username,
-            'email'         => $user->email,
-            'phone'         => $user->phone,
-            'avatar'        => $user->avatar,
-            'avatar_url'    => $user->avatar ? asset('storage/' . $user->avatar) : null,
-            'is_active'     => $user->is_active,
-            'created_at'    => $user->created_at,
-            'updated_at'    => $user->updated_at,
-        ], 'Profil berhasil diperbarui');
+        return ApiResponse::success(
+            new UserResource($user),
+            'Profil berhasil diperbarui'
+        );
     }
 
     /**
