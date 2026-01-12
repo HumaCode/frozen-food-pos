@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\WholesalePriceController;
 use App\Http\Controllers\Api\V1\ShiftController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\CashFlowController;
+use App\Http\Controllers\Api\v1\CategoryApiController;
 use App\Http\Controllers\Api\v1\StoreApiController;
 use App\Http\Controllers\Api\V1\StoreController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -71,11 +72,11 @@ Route::prefix('v1')->middleware(['api.key'])->group(function () {
         | Categories
         |------------------------------------------------------------------
         */
-        // Route::prefix('categories')->group(function () {
-        //     Route::get('/', [CategoryController::class, 'index']);
-        //     Route::get('/{category}', [CategoryController::class, 'show']);
-        //     Route::get('/{category}/products', [CategoryController::class, 'products']);
-        // });
+        Route::prefix('categories')->group(function () {
+            Route::get('/', [CategoryApiController::class, 'index']);
+            Route::get('/{category}', [CategoryApiController::class, 'show']);
+            Route::get('/{category}/products', [CategoryApiController::class, 'products']);
+        });
 
         /*
         |------------------------------------------------------------------
