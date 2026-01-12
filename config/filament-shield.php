@@ -17,8 +17,13 @@ return [
 
     'shield_resource' => [
         'slug' => 'shield/roles',
-        'show_model_path' => true,
         'cluster' => null,
+        'should_register_navigation' => true,
+        'navigation_sort' => -1,
+        'navigation_badge' => true,
+        'navigation_group' => true,
+        'is_globally_searchable' => false,
+        'show_model_path' => true,
         'tabs' => [
             'pages' => true,
             'widgets' => true,
@@ -122,8 +127,17 @@ return [
         'merge' => true,
         'generate' => true,
         'methods' => [
-            'viewAny', 'view', 'create', 'update', 'delete', 'restore',
-            'forceDelete', 'forceDeleteAny', 'restoreAny', 'replicate', 'reorder',
+            'viewAny',
+            'view',
+            'create',
+            'update',
+            'delete',
+            'restore',
+            'forceDelete',
+            'forceDeleteAny',
+            'restoreAny',
+            'replicate',
+            'reorder',
         ],
         'single_parameter_methods' => [
             'viewAny',
