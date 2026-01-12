@@ -45,7 +45,7 @@ class UsersTable
                     ->weight('semibold')
                     ->formatStateUsing(fn(string $state) => ucwords(strtolower($state)))
                     ->description(fn(User $record) => $record->email),
-                
+
                 TextColumn::make('username')
                     ->label('Username')
                     ->searchable()

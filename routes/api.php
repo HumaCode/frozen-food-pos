@@ -51,12 +51,12 @@ Route::prefix('v1')->middleware(['api.key'])->group(function () {
         | Auth
         |------------------------------------------------------------------
         */
-        // Route::prefix('auth')->group(function () {
-        //     Route::post('/logout', [AuthController::class, 'logout']);
-        //     Route::get('/me', [AuthController::class, 'me']);
-        //     Route::put('/profile', [AuthController::class, 'updateProfile']);
-        //     Route::put('/password', [AuthController::class, 'updatePassword']);
-        // });
+        Route::prefix('auth')->group(function () {
+            Route::post('/logout', [AuthApiController::class, 'logout']);
+            Route::get('/me', [AuthApiController::class, 'me']);
+            Route::post('/profile', [AuthApiController::class, 'updateProfile']);
+            Route::post('/password', [AuthApiController::class, 'updatePassword']);
+        });
 
         /*
         |------------------------------------------------------------------

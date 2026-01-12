@@ -18,7 +18,8 @@ class ApiKeyMiddleware
     {
         // 1. Validasi Accept Header
         $acceptHeader = $request->header('Accept');
-        
+
+
         if ($acceptHeader !== 'application/json') {
             return ApiResponse::badRequest(
                 'Header Accept harus application/json'
@@ -26,7 +27,7 @@ class ApiKeyMiddleware
         }
 
         // 2. Validasi API Key
-        $apiKey = $request->header('X-API-Key');
+        $apiKey = $request->header('X-API-Key') ?? $request->header('x-api-key');
         $validApiKey = config('api.key', 'HumaCode2025');
 
         if (empty($apiKey)) {
