@@ -15,6 +15,94 @@ class TransactionInfolist
     {
         return $schema
             ->components([
+
+                Section::make('Detail Item')
+                ->icon('heroicon-o-shopping-bag')
+                ->components([
+                    RepeatableEntry::make('items')
+                        ->label('')
+                        ->schema([
+                            TextEntry::make('product_name')
+                                ->label('Produk')
+                                ->weight('semibold'),
+
+                            TextEntry::make('qty')
+                                ->label('Qty')
+                                ->badge()
+                                ->color('gray'),
+
+                            TextEntry::make('price')
+                                ->label('Harga')
+                                ->money('IDR'),
+
+                            TextEntry::make('discount_per_item')
+                                ->label('Diskon')
+                                ->money('IDR')
+                                ->placeholder('-')
+                                ->color('danger'),
+
+                            TextEntry::make('is_wholesale')
+                                ->label('Grosir')
+                                ->badge()
+                                ->formatStateUsing(fn ($state) => $state ? 'Ya' : '-')
+                                ->color(fn ($state) => $state ? 'info' : 'gray'),
+
+                            TextEntry::make('subtotal')
+                                ->label('Subtotal')
+                                ->money('IDR')
+                                ->weight('semibold')
+                                ->color('success'),
+                        ])
+                        ->columns(2)
+                        ->grid(2)
+                        ,
+                ])->columnSpan(2),
+
+                Grid::make(2)
+                    ->components([
+                        Section::make('Catatan')
+                            ->icon('heroicon-o-chat-bubble-left')
+                            ->components([
+                                TextEntry::make('notes')
+                                    ->label('')
+                                    ->placeholder('Tidak ada catatan')
+                                    ->columnSpanFull(),
+                            ])
+                            ->hidden(fn (Transaction $record) => empty($record->notes)),
+
+                        Section::make('Ringkasan')
+                            ->icon('heroicon-o-calculator')
+                            ->components([
+                                TextEntry::make('subtotal')
+                                    ->label('Subtotal')
+                                    ->money('IDR'),
+
+                                TextEntry::make('discount_amount')
+                                    ->label('Diskon')
+                                    ->money('IDR')
+                                    ->color('danger')
+                                    ->formatStateUsing(fn ($state) => $state > 0 ? '-Rp ' . number_format($state, 0, ',', '.') : '-'),
+
+                                TextEntry::make('total')
+                                    ->label('Total')
+                                    ->money('IDR')
+                                    ->weight('bold')
+                                    ->color('success')
+                                    ->size('lg'),
+
+                                TextEntry::make('paid_amount')
+                                    ->label('Bayar')
+                                    ->money('IDR'),
+
+                                TextEntry::make('change_amount')
+                                    ->label('Kembali')
+                                    ->money('IDR')
+                                    ->color('info'),
+                            ])
+                            ->columnSpan(fn (Transaction $record) => empty($record->notes) ? 3 : 1),
+                    ]),
+
+
                 Grid::make(3)
                     ->schema([
                         Section::make('Informasi Transaksi')
@@ -74,94 +162,14 @@ class TransactionInfolist
                                     ->color(fn ($state) => $state ? 'success' : 'warning')
                                     ->icon(fn ($state) => $state ? 'heroicon-o-cloud-arrow-up' : 'heroicon-o-clock'),
                             ])
-                            ->columnSpan(1),
-                    ]),
+                            ->columns(2)
+                            ->columnSpan(2),
+                    ])
+                    ->columns(2),
 
-                Section::make('Detail Item')
-                    ->icon('heroicon-o-shopping-bag')
-                    ->components([
-                        RepeatableEntry::make('items')
-                            ->label('')
-                            ->schema([
-                                TextEntry::make('product_name')
-                                    ->label('Produk')
-                                    ->weight('semibold'),
 
-                                TextEntry::make('qty')
-                                    ->label('Qty')
-                                    ->badge()
-                                    ->color('gray'),
 
-                                TextEntry::make('price')
-                                    ->label('Harga')
-                                    ->money('IDR'),
 
-                                TextEntry::make('discount_per_item')
-                                    ->label('Diskon')
-                                    ->money('IDR')
-                                    ->placeholder('-')
-                                    ->color('danger'),
-
-                                TextEntry::make('is_wholesale')
-                                    ->label('Grosir')
-                                    ->badge()
-                                    ->formatStateUsing(fn ($state) => $state ? 'Ya' : '-')
-                                    ->color(fn ($state) => $state ? 'info' : 'gray'),
-
-                                TextEntry::make('subtotal')
-                                    ->label('Subtotal')
-                                    ->money('IDR')
-                                    ->weight('semibold')
-                                    ->color('success'),
-                            ])
-                            ->columns(6)
-                            ->grid(1),
-                    ]),
-
-                Grid::make(3)
-                    ->components([
-                        Section::make('Catatan')
-                            ->icon('heroicon-o-chat-bubble-left')
-                            ->components([
-                                TextEntry::make('notes')
-                                    ->label('')
-                                    ->placeholder('Tidak ada catatan')
-                                    ->columnSpanFull(),
-                            ])
-                            ->columnSpan(2)
-                            ->hidden(fn (Transaction $record) => empty($record->notes)),
-
-                        Section::make('Ringkasan')
-                            ->icon('heroicon-o-calculator')
-                            ->components([
-                                TextEntry::make('subtotal')
-                                    ->label('Subtotal')
-                                    ->money('IDR'),
-
-                                TextEntry::make('discount_amount')
-                                    ->label('Diskon')
-                                    ->money('IDR')
-                                    ->color('danger')
-                                    ->formatStateUsing(fn ($state) => $state > 0 ? '-Rp ' . number_format($state, 0, ',', '.') : '-'),
-
-                                TextEntry::make('total')
-                                    ->label('Total')
-                                    ->money('IDR')
-                                    ->weight('bold')
-                                    ->color('success')
-                                    ->size(TextEntry\TextEntrySize::Large),
-
-                                TextEntry::make('paid_amount')
-                                    ->label('Bayar')
-                                    ->money('IDR'),
-
-                                TextEntry::make('change_amount')
-                                    ->label('Kembali')
-                                    ->money('IDR')
-                                    ->color('info'),
-                            ])
-                            ->columnSpan(fn (Transaction $record) => empty($record->notes) ? 3 : 1),
-                    ]),
             ]);
     }
 }

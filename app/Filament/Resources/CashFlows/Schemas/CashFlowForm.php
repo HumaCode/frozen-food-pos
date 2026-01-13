@@ -49,6 +49,7 @@ class CashFlowForm
                             ->prefix('Rp')
                             ->placeholder('0')
                             ->minValue(1)
+                            ->live(debounce: 500)
                             ->columnSpanFull(),
 
                         Select::make('shift_id')
@@ -66,23 +67,25 @@ class CashFlowForm
                             ->label('Keterangan')
                             ->required()
                             ->rows(3)
-                            ->placeholder(fn (Get $get) => $get('type') === 'in' 
-                                ? 'Contoh: Modal awal, Setoran tambahan, dll' 
+                            ->placeholder(fn (Get $get) => $get('type') === 'in'
+                                ? 'Contoh: Modal awal, Setoran tambahan, dll'
                                 : 'Contoh: Pembelian plastik, Biaya listrik, dll'
                             )
                             ->columnSpanFull(),
 
-                        Placeholder::make('info')
+                            Placeholder::make('info')
                             ->label('')
                             ->content(function (Get $get) {
-                                $type = $get('type');
+                                $type = $get('type') ?? 'in';  // Default ke 'in' jika null
                                 $amount = (float) $get('amount');
 
-                                if (!$amount) return '';
+                                if (!$amount) {
+                                    return null;
+                                }
 
                                 $formattedAmount = 'Rp ' . number_format($amount, 0, ',', '.');
 
-                                if ($type === 'in') {
+                                if ($type !== 'out') {  // Ubah kondisi: jika bukan 'out' maka 'in'
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="text-sm text-green-600 bg-green-50 dark:bg-green-900/20 p-4 rounded-lg flex items-center gap-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -102,6 +105,7 @@ class CashFlowForm
                                     </div>'
                                 );
                             })
+                            ->hidden(fn (Get $get) => !$get('amount'))
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
