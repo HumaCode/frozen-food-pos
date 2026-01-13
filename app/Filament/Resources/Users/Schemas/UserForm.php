@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Schemas;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
@@ -23,14 +24,14 @@ class UserForm
                         Section::make('Informasi Pengguna')
                             ->icon('heroicon-o-user')
                             ->description('Data utama pengguna')
-                            ->schema([
+                            ->components([
                                 TextInput::make('name')
                                     ->label('Nama Lengkap')
                                     ->required()
                                     ->maxLength(255)
                                     ->placeholder('Masukkan nama lengkap')
                                     ->prefixIcon('heroicon-o-user'),
-                                
+
                                 TextInput::make('username')
                                     ->required()
                                     ->maxLength(255)
@@ -52,7 +53,17 @@ class UserForm
                                     ->maxLength(20)
                                     ->placeholder('08xxxxxxxxxx')
                                     ->prefixIcon('heroicon-o-phone'),
-                            ]),
+
+                                 // Tambahkan Select Role
+                                Select::make('roles')
+                                    ->label('Role')
+                                    ->relationship('roles', 'name')
+                                    ->multiple()
+                                    ->preload()
+                                    ->searchable()
+                                    ->native(false)
+                                    ->placeholder('Pilih role'),
+                            ])->columns(2),
 
                         Section::make('Keamanan')
                             ->icon('heroicon-o-lock-closed')
@@ -79,13 +90,13 @@ class UserForm
                                     ->placeholder('Ulangi password')
                                     ->prefixIcon('heroicon-o-key')
                                     ->dehydrated(false),
-                            ]),
-                        
+                            ])->columns(2),
+
                         Section::make('Avatar')
                             ->icon('heroicon-o-user')
                             ->description('Upload avatar (optional)')
                             ->components([
-                                 FileUpload::make('avatar')
+                                FileUpload::make('avatar')
                                     ->label('Avatar')
                                     ->image()
                                     ->imageEditor()

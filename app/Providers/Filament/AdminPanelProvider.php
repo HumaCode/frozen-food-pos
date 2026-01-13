@@ -32,6 +32,9 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login(Login::class)
             ->brandName('Frozen Food')
+            ->brandLogo(asset('images/logo.svg'))
+            ->darkModeBrandLogo(asset('images/logo-dark.svg'))
+            ->brandLogoHeight('3rem')
             ->colors([
                 'primary' => Color::Blue,
             ])
@@ -43,7 +46,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

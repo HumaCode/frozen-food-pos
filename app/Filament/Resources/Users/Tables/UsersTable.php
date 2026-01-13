@@ -51,6 +51,19 @@ class UsersTable
                     ->searchable()
                     ->weight('semibold'),
 
+                TextColumn::make('roles.name')
+                    ->label('Role')
+                    ->badge()
+                    ->color(fn (string $state): string => match($state) {
+                        'super_admin' => 'danger',
+                        'admin' => 'warning',
+                        'owner' => 'success',
+                        'kasir' => 'info',
+                        default => 'gray',
+                    })
+                    ->separator(', ')
+                    ->searchable(),
+
                 TextColumn::make('phone')
                     ->label('Telepon')
                     ->icon('heroicon-o-phone')
