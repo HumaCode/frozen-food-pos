@@ -3,6 +3,11 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Widgets\DashboardStatsWidget;
+use App\Filament\Widgets\RevenueChartWidget;
+use App\Filament\Widgets\TopProductsChartWidget;
+use App\Filament\Widgets\CategorySalesChartWidget;
+use App\Filament\Widgets\CashflowChartWidget;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -45,7 +50,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
+                DashboardStatsWidget::class,
+                RevenueChartWidget::class,
+                TopProductsChartWidget::class,
+                CategorySalesChartWidget::class,
+                CashflowChartWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
